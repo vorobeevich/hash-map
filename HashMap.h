@@ -15,14 +15,15 @@ class HashMap {
         count_elements_ = 0;
         table.resize(table_size_);
     }
-    HashMap(const std::initializer_list<std::pair<const KeyType, ValueType> > &init,
-            Hash hasher_ = Hash()) : HashMap(hasher_) {
+    HashMap(const std::initializer_list<std::pair<const KeyType, ValueType> >
+            &init, Hash hasher_ = Hash()) : HashMap(hasher_) {
         for (auto const &current_element : init) {
             insert(current_element);
         }
     }
     template <typename Inputit>
-    HashMap(Inputit first, Inputit last, Hash hasher_ = Hash()) : HashMap(hasher_) {
+    HashMap(Inputit first, Inputit last,
+            Hash hasher_ = Hash()) : HashMap(hasher_) {
         for (auto current_iter = first; current_iter != last; ++current_iter) {
             insert(*current_iter);
         }
@@ -66,9 +67,8 @@ class HashMap {
     void rebuild();
 };
 
-
 template<class KeyType, class ValueType, class Hash>
-auto HashMap<KeyType, ValueType, Hash>:: find (const KeyType key) -> iterator {
+auto HashMap<KeyType, ValueType, Hash>:: find(const KeyType key) -> iterator {
     size_t index = hasher_(key) % table_size_;
     for (auto const &element : table[index]) {
         if ((*element).first == key) {
@@ -92,7 +92,7 @@ auto HashMap<KeyType, ValueType, Hash>:: find
 
 template<class KeyType, class ValueType, class Hash>
 void HashMap<KeyType, ValueType, Hash>::insert
-        (std::pair <const KeyType, ValueType> new_element) {
+        (std::pair<const KeyType, ValueType> new_element) {
     size_t index = hasher_(new_element.first) % table_size_;
     all.push_back(new_element);
     iterator new_iter = all.end();
