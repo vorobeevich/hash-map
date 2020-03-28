@@ -156,19 +156,19 @@ ValueType& HashMap<KeyType, ValueType, Hash>::operator[](
     auto result = find(key);
     if (result == all.end()) {
         insert({key, {}});
-        return (*find(key)).second;
+        return find(key) -> second;
     }
-    return (*result).second;
+    return result -> second;
 }
 
 template<class KeyType, class ValueType, class Hash>
 const ValueType& HashMap<KeyType, ValueType, Hash>::at(
         const KeyType& key) const {
-    const_iterator cur = find(key);
-    if (cur == all.cend()) {
+    const_iterator result = find(key);
+    if (result == all.cend()) {
         throw std::out_of_range("");
     }
-    return (*cur).second;
+    return result -> second;
 }
 
 template<class KeyType, class ValueType, class Hash>
@@ -191,7 +191,7 @@ void HashMap<KeyType, ValueType, Hash>::rebuild() {
     table.clear();
     table.resize(table_size_);
     for (auto iter = all.begin(); iter != all.end(); ++iter) {
-        size_t index = hasher_((*iter).first) % table_size_;
+        size_t index = hasher_(iter -> first) % table_size_;
         table[index].push_back(iter);
     }
 }
