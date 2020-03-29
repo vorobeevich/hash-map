@@ -8,11 +8,9 @@
 template<class KeyType, class ValueType, class Hash = std::hash<KeyType>>
 class HashMap {
  public:
-    using iterator = typename
-        std::list<std::pair<const KeyType, ValueType>>::iterator;
-    using const_iterator = typename
-        std::list<std::pair<const KeyType, ValueType>>::const_iterator;
     using KeyValuePair = typename std::pair<const KeyType, ValueType>;
+    using iterator = typename std::list<KeyValuePair>::iterator;
+    using const_iterator = typename std::list<KeyValuePair>::const_iterator;
 
     HashMap(Hash hasher_ = Hash()) : hasher_(hasher_) {
         table_size_ = start_size_;
@@ -20,7 +18,7 @@ class HashMap {
         table.resize(table_size_);
     }
 
-    HashMap(const std::initializer_list<KeyValuePair> &init,
+    HashMap(const std::initializer_list<KeyValuePair>& init,
             Hash hasher_ = Hash()) : HashMap(hasher_) {
         for (auto const &current_element : init) {
             insert(current_element);
@@ -73,11 +71,11 @@ class HashMap {
 
     const_iterator find(const KeyType& key) const;
 
-    ValueType &operator[](const KeyType& key);
+    ValueType& operator[](const KeyType& key);
 
-    const ValueType &at(const KeyType& key) const;
+    const ValueType& at(const KeyType& key) const;
 
-    HashMap &operator=(const HashMap &other);
+    HashMap& operator=(const HashMap& other);
 
  private:
     size_t table_size_;
@@ -95,7 +93,7 @@ auto HashMap<KeyType, ValueType, Hash>::find(
         const KeyType& key) -> iterator {
     size_t index = hasher_(key) % table_size_;
     for (auto const &element : table[index]) {
-        if (element -> first == key) {
+        if (element->first == key) {
             return element;
         }
     }
@@ -107,7 +105,7 @@ auto HashMap<KeyType, ValueType, Hash>::find(
         const KeyType& key) const -> const_iterator {
     size_t index = hasher_(key) % table_size_;
     for (auto const &element : table[index]) {
-        if (element -> first == key) {
+        if (element->first == key) {
             return element;
         }
     }
@@ -119,9 +117,7 @@ void HashMap<KeyType, ValueType, Hash>::insert(
         const KeyValuePair& new_element) {
     size_t index = hasher_(new_element.first) % table_size_;
     all.push_back(new_element);
-    iterator new_iter = all.end();
-    new_iter--;
-    table[index].push_back(new_iter);
+    table[index].push_back(std::prev(all.end()));
     count_elements_++;
     if (count_elements_ == table_size_) {
         rebuild();
@@ -130,11 +126,12 @@ void HashMap<KeyType, ValueType, Hash>::insert(
 
 template<class KeyType, class ValueType, class Hash>
 void HashMap<KeyType, ValueType, Hash>::erase(const KeyType& key) {
-    size_t num = hasher_(key) % table_size_;
-    for (auto iter = table[num].begin(); iter != table[num].end(); iter++) {
-        if ((*iter) -> first == key) {
+    size_t index = hasher_(key) % table_size_;
+    for (auto iter = table[index].begin(); iter != table[index].end();
+            ++iter) {
+        if ((*iter)->first == key) {
             all.erase(*iter);
-            table[num].erase(iter);
+            table[index].erase(iter);
             count_elements_--;
             break;
         }
@@ -156,9 +153,9 @@ ValueType& HashMap<KeyType, ValueType, Hash>::operator[](
     auto result = find(key);
     if (result == all.end()) {
         insert({key, {}});
-        return find(key) -> second;
+        return find(key)->second;
     }
-    return result -> second;
+    return result->second;
 }
 
 template<class KeyType, class ValueType, class Hash>
@@ -168,13 +165,12 @@ const ValueType& HashMap<KeyType, ValueType, Hash>::at(
     if (result == all.cend()) {
         throw std::out_of_range("");
     }
-    return result -> second;
+    return result->second;
 }
 
 template<class KeyType, class ValueType, class Hash>
 HashMap<KeyType, ValueType, Hash>&
-        HashMap<KeyType, ValueType, Hash>::operator=(
-            const HashMap &other) {
+        HashMap<KeyType, ValueType, Hash>::operator=(const HashMap &other) {
     if (this == &other) {
         return *this;
     }
@@ -191,7 +187,7 @@ void HashMap<KeyType, ValueType, Hash>::rebuild() {
     table.clear();
     table.resize(table_size_);
     for (auto iter = all.begin(); iter != all.end(); ++iter) {
-        size_t index = hasher_(iter -> first) % table_size_;
+        size_t index = hasher_(iter->first) % table_size_;
         table[index].push_back(iter);
     }
 }
