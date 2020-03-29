@@ -80,7 +80,8 @@ class HashMap {
  private:
     size_t table_size_;
     size_t count_elements_;
-    const size_t startSize_ = 10, changeSize_ = 2;
+    const size_t startSize_ = 10;
+    const size_t changeSize_ = 2;
     std::list<KeyValuePair> all;
     std::vector<std::list<iterator>> table;
     Hash hasher_;
