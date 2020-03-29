@@ -13,7 +13,7 @@ class HashMap {
     using const_iterator = typename std::list<KeyValuePair>::const_iterator;
 
     HashMap(Hash hasher_ = Hash()) : hasher_(hasher_) {
-        table_size_ = start_size_;
+        table_size_ = startSize_;
         count_elements_ = 0;
         table.resize(table_size_);
     }
@@ -80,7 +80,7 @@ class HashMap {
  private:
     size_t table_size_;
     size_t count_elements_;
-    const size_t start_size_ = 10, change_size_ = 2;
+    const size_t startSize_ = 10, changeSize_ = 2;
     std::list<KeyValuePair> all;
     std::vector<std::list<iterator>> table;
     Hash hasher_;
@@ -143,7 +143,7 @@ void HashMap <KeyType, ValueType, Hash>::clear() {
     all.clear();
     table.clear();
     count_elements_ = 0;
-    table_size_ = start_size_;
+    table_size_ = startSize_;
     table.resize(table_size_);
 }
 
@@ -183,7 +183,7 @@ HashMap<KeyType, ValueType, Hash>&
 
 template<class KeyType, class ValueType, class Hash>
 void HashMap<KeyType, ValueType, Hash>::rebuild() {
-    table_size_ *= change_size_;
+    table_size_ *= changeSize_;
     table.clear();
     table.resize(table_size_);
     for (auto iter = all.begin(); iter != all.end(); ++iter) {
